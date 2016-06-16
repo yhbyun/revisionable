@@ -18,7 +18,9 @@ class Revision extends Eloquent
     /**
      * @var string
      */
-    public $table = 'revisions';
+    public $table = 'revision';
+
+    public $timestamps = false;
 
     /**
      * @var array
@@ -31,6 +33,15 @@ class Revision extends Eloquent
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->setCreatedAt($model->freshTimestamp());
+        });
     }
 
     /**
@@ -194,11 +205,11 @@ class Revision extends Eloquent
      */
     public function userResponsible()
     {
-        if (empty($this->user_id)) { return false; }
+        if (empty($this->member_id)) { return false; }
         if (class_exists($class = '\Cartalyst\Sentry\Facades\Laravel\Sentry')
             || class_exists($class = '\Cartalyst\Sentinel\Laravel\Facades\Sentinel')
         ) {
-            return $class::findUserById($this->user_id);
+            return $class::findUserById($this->member_id);
         } else {
             $user_model = app('config')->get('auth.model');
 
@@ -211,7 +222,7 @@ class Revision extends Eloquent
             if (!class_exists($user_model)) {
                 return false;
             }
-            return $user_model::find($this->user_id);
+            return $user_model::find($this->member_id);
         }
     }
 

@@ -103,7 +103,7 @@ trait RevisionableTrait
     public static function classRevisionHistory($limit = 100, $order = 'desc')
     {
         return \Venturecraft\Revisionable\Revision::where('revisionable_type', get_called_class())
-            ->orderBy('updated_at', $order)->limit($limit)->get();
+            ->orderBy('created_at', $order)->limit($limit)->get();
     }
 
     /**
@@ -181,10 +181,9 @@ trait RevisionableTrait
                     'key' => $key,
                     'old_value' => array_get($this->originalData, $key),
                     'new_value' => $this->updatedData[$key],
-                    'user_id' => $this->getUserId(),
+                    'member_id' => $this->getUserId(),
                     'ip' => $this->getClientIp(),
-                    'created_at' => new \DateTime(),
-                    'updated_at' => new \DateTime(),
+                    'created_at' => new \DateTime()
                 );
             }
 
@@ -223,10 +222,9 @@ trait RevisionableTrait
                 'key' => 'created_at',
                 'old_value' => null,
                 'new_value' => $this->created_at,
-                'user_id' => $this->getUserId(),
+                'member_id' => $this->getUserId(),
                 'ip' => $this->getClientIp(),
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
+                'created_at' => new \DateTime()
             );
 
             $revision = new Revision;
@@ -252,10 +250,9 @@ trait RevisionableTrait
                 'key' => 'deleted_at',
                 'old_value' => null,
                 'new_value' => $this->deleted_at,
-                'user_id' => $this->getUserId(),
+                'member_id' => $this->getUserId(),
                 'ip' => $this->getClientIp(),
-                'created_at' => new \DateTime(),
-                'updated_at' => new \DateTime(),
+                'created_at' => new \DateTime()
             );
             $revision = new \Venturecraft\Revisionable\Revision;
             \DB::table($revision->getTable())->insert($revisions);
